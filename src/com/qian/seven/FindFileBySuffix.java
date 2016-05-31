@@ -6,17 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ * find file with specified  suffix in the root directory
  * @author wuhuaiqian
- * 2016Äê5ÔÂ31ÈÕ
- * ¸ù¾İÖ¸¶¨ÎÄ¼şºó×º¹ıÂË³öÄ³¸öÎÄ¼ş¼ĞÏÂËùÓĞÎÄ¼ş
+ * 2016å¹´6æœˆ1æ—¥
  */
 public class FindFileBySuffix {
 	/**
 	 * 
-	 * @param file ´ı²éÕÒµÄ¸ùÄ¿Â¼
-	 * @param suffixs ·ûºÏÒªÇóµÄÎÄ¼şºó×ºµÄÊı×é
-	 * @return 
+	 * @param file ï¼Œthe root directory
+	 * @param suffixs ,array of the acceptable suffixes
+	 * @return List of specified suffix files;
 	 */
 	public List<File> getFile(File file, final String  [] suffixs)  {
 		if(!file.isDirectory()){
@@ -24,10 +23,10 @@ public class FindFileBySuffix {
 		}
 		else{
 			List<File> fileList = new ArrayList<File>();
-			// ´´½¨¹ıÂËÆ÷
+			// 
 			FileFilter ff =null;
 			if(suffixs==null){
-				//²éÕÒËùÓĞÎÄ¼ş
+				//æ¥å—æ‰€æœ‰æ–‡ä»¶
 				ff = new FileFilter() {
 					@Override
 					public boolean accept(File file) {
@@ -39,7 +38,7 @@ public class FindFileBySuffix {
 				 ff = new FileFilter() {
 						@Override
 						public boolean accept(File file) {
-							// ¶¨Òå¹ıÂË¹æÔò
+							// åŒ…å«ç‰¹å®šåç¼€çš„æ–‡ä»¶
 							if (file.isFile() && isAcceptSuffix(file, suffixs))
 								return true;
 							else if (file.isDirectory())
@@ -56,20 +55,20 @@ public class FindFileBySuffix {
 		
 	}
 	/**
-	 * ÓÃÓÚ¸¨ÖúÍê³ÉgetFile(File file, final String  [] suffixs)µÄ¹¦ÄÜ
+	 * Assistant getFile(File file, final String  [] suffixes)
 	 */
 	private List<File> findAllFile(File root, FileFilter ff, List<File> list) {
-		File[] childrenfile = root.listFiles(ff);//ÁĞ³öµ±Ç°fileÏÂµÄËùÓĞ·ûºÏÌõ¼şµÄ×Ófile
+		File[] childrenfile = root.listFiles(ff);//æ ¹æ®è¿‡æ»¤å™¨åˆ—å‡ºæ–‡ä»¶
 		for (File file : childrenfile) {
-			if (file.isFile())//ÊÇÎÄ¼ş£¬Ìí¼Óµ½listÖĞ
+			if (file.isFile())//æ˜¯æ–‡ä»¶æ·»åŠ åˆ°listä¸­
 				list.add(file);
 			else
-				findAllFile(file, ff, list);//ÊÇÄ¿Â¼£¬µİ¹éµ÷ÓÃ
+				findAllFile(file, ff, list);//é€’å½’æŸ¥æ‰¾ç›®å½•
 		}
 		return list;
 	}
 	/**
-	 * ½ØÈ¡ºó×ºÃû£¬²¢ÅĞ¶ÏÊÇ·ñ·ûºÏÒªÇó
+	 * 
 	 * @param file
 	 * @param suffixs
 	 * @return
