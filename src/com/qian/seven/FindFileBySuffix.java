@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * find file with specified  suffix in the root directory
- * @author wuhuaiqian
- * 2016年6月1日
+ * 
+ * @author wuhuaiqian E-mail：ngitfk@qq.com
+ * 2016年6月5日
  */
 public class FindFileBySuffix {
 	/**
 	 * 
 	 * @param file ，the root directory
 	 * @param suffixs ,array of the acceptable suffixes
-	 * @return List of specified suffix files;
+	 * @return List of  files with specified suffix;
 	 */
 	public List<File> getFile(File file, final String  [] suffixs)  {
 		if(!file.isDirectory()){
