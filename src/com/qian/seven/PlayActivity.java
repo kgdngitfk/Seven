@@ -66,18 +66,26 @@ public class PlayActivity extends Activity implements OnClickListener{
 			playService.pause();
 			v.setClickable(false);
 			buttons[4].setClickable(true);
+			break;
 		}
 		case R.id.resume:{
 			playService.resume();
 			v.setClickable(false);
 			buttons[3].setClickable(true);
+			break;
 		}
-		case R.id.next:
+		case R.id.next:{
 			playService.next();
-		case R.id.previous:
-			playService.previous();;
-		case R.id.random:
-			playService.randomPlay();;
+			break;
+		}
+		case R.id.previous:{
+			playService.previous();
+			break;
+		}
+		case R.id.random:{
+			playService.randomPlay();
+			break;
+		}
 		}
 	}
 

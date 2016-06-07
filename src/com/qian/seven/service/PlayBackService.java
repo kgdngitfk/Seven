@@ -74,6 +74,7 @@ public class PlayBackService extends Service {
 	}
 
 	public void changeMusic(int position) {
+		currentIndex = position;
 		if (mediaPlayer.isPlaying())
 			mediaPlayer.reset();
 		try {
@@ -88,12 +89,22 @@ public class PlayBackService extends Service {
 	}
 
 	public void next() {
-		int next = ++currentIndex % (music.size());
+		++currentIndex;
+		int next = currentIndex % (music.size());
 		changeMusic(next);
 	}
 
 	public void previous() {
-		int previous = --currentIndex % (music.size());// 0 bug?
+		int previous = 0;
+		if (currentIndex == 0){
+			previous = music.size() - 1;//计算上一曲的正确索引位置
+			currentIndex = previous;//更新当前索引位置
+			
+		}
+		else {
+			--currentIndex;//更新当前索引
+			previous = currentIndex % (music.size());// 计算上一曲的索引
+		}
 		changeMusic(previous);
 	}
 
