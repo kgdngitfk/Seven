@@ -1,5 +1,6 @@
-package com.qian.seven;
+package com.qian.seven.ui;
 
+import com.qian.seven.R;
 import com.qian.seven.service.PlayBackService;
 import com.qian.seven.service.PlayBackService.LocalBinder;
 
@@ -14,16 +15,21 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
-public class PlayActivity extends Activity implements OnClickListener{
-	LocalBinder lbinder;
+public class PlayActivity extends Activity implements OnClickListener {
+	private Button buttons[] = new Button[5];
+	private TextView songName;
+	private LocalBinder lbinder;
 	private PlayBackService playService;
-	private Button buttons [] = new Button[5];
 	private ServiceConnection conn = new ServiceConnection() {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			// TODO Auto-generated method stub
+			lbinder = null;
+			conn = null;
+			Log.i("seven", "unbind service");
 
 		}
 
@@ -32,19 +38,24 @@ public class PlayActivity extends Activity implements OnClickListener{
 			// TODO Auto-generated method stub
 			lbinder = (LocalBinder) service;
 			playService = lbinder.getService();
+			Log.i("seven", "bind service");
 
 		}
 	};
-	private Button random;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.play);
-		Intent intent = new Intent(this, PlayBackService.class);
-		bindService(intent, conn, Context.BIND_AUTO_CREATE);
-			initButtons();
-		
+		initButtons();
+		songName = (TextView) findViewById(R.id.songName);
+		String string = getIntent().getStringExtra("songName");
+		songName.setText(string);
+
+		Intent service = new Intent(this, PlayBackService.class);
+		//bindService(service, conn, Context.BIND_AUTO_CREATE);
+		int intExtra = getIntent().getIntExtra("index", 0);
+		//playService.playMusic(intExtra);
 	}
 
 	private void initButtons() {
@@ -61,28 +72,28 @@ public class PlayActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		switch(v.getId()){
-		case R.id.stop:{
+		switch (v.getId()) {
+		case R.id.stop: {
 			playService.pause();
 			v.setClickable(false);
 			buttons[4].setClickable(true);
 			break;
 		}
-		case R.id.resume:{
+		case R.id.resume: {
 			playService.resume();
 			v.setClickable(false);
 			buttons[3].setClickable(true);
 			break;
 		}
-		case R.id.next:{
+		case R.id.next: {
 			playService.next();
 			break;
 		}
-		case R.id.previous:{
+		case R.id.previous: {
 			playService.previous();
 			break;
 		}
-		case R.id.random:{
+		case R.id.random: {
 			playService.randomPlay();
 			break;
 		}

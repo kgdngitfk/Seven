@@ -2,32 +2,32 @@ package com.qian.seven.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.qian.seven.FindFileBySuffix;
+import com.qian.seven.utils.FindFileBySuffix;
 
 import android.app.Service;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
+import android.provider.MediaStore;
 
 public class PlayBackService extends Service {
 	private MediaPlayer mediaPlayer = new MediaPlayer();
-	private final IBinder mBinder = new LocalBinder();
-	private static List<File> music;
+	private  IBinder mBinder = new LocalBinder();
 	private int currentIndex = 0;
 	private static final int LIST_RECYCLE = 1;
 	private static final int RANDOM = 2;
 	private static final int SINGLE_RECYCLE = 3;
 	private static int CURRENT_RECYCLE = LIST_RECYCLE;
-
-	private List<File> findMusic() {
-		File derictory = Environment.getExternalStorageDirectory();
-		return new FindFileBySuffix().getFile(derictory, new String[] { "mp3" });
-	}
+	private List<String> musics = new ArrayList<>();
 
 	public class LocalBinder extends Binder {
 		public PlayBackService getService() {
@@ -36,11 +36,11 @@ public class PlayBackService extends Service {
 			return PlayBackService.this;
 		}
 	}
-
 	@Override
 	public IBinder onBind(Intent intent) {
 		// init resouce and set listener;
-		music = this.findMusic();
+		musics = this.contentResolver();
+		this.playMusic(intent.getIntExtra("index", 0));
 		mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
 			@Override
@@ -73,13 +73,13 @@ public class PlayBackService extends Service {
 		return mBinder;
 	}
 
-	public void changeMusic(int position) {
+	public void playMusic(int position) {
 		currentIndex = position;
 		if (mediaPlayer.isPlaying())
 			mediaPlayer.reset();
 		try {
 
-			mediaPlayer.setDataSource(music.get(position).getAbsolutePath());
+			mediaPlayer.setDataSource(musics.get(position));
 			mediaPlayer.prepare();
 		} catch (IllegalArgumentException | SecurityException | IllegalStateException | IOException e) {
 			// TODO Auto-generated catch block
@@ -88,30 +88,30 @@ public class PlayBackService extends Service {
 		mediaPlayer.start();
 	}
 
+	// a better solution is use recycle queue
 	public void next() {
 		++currentIndex;
-		int next = currentIndex % (music.size());
-		changeMusic(next);
+		int next = currentIndex % (musics.size());
+		playMusic(next);
 	}
 
 	public void previous() {
 		int previous = 0;
-		if (currentIndex == 0){
-			previous = music.size() - 1;//计算上一曲的正确索引位置
-			currentIndex = previous;//更新当前索引位置
-			
+		if (currentIndex == 0) {
+			previous = musics.size() - 1;// 计算上一曲的正确索引位置
+			currentIndex = previous;// 更新当前索引位置
+
+		} else {
+			--currentIndex;// 更新当前索引
+			previous = currentIndex % (musics.size());// 计算上一曲的索引
 		}
-		else {
-			--currentIndex;//更新当前索引
-			previous = currentIndex % (music.size());// 计算上一曲的索引
-		}
-		changeMusic(previous);
+		playMusic(previous);
 	}
 
 	public void randomPlay() {
 		CURRENT_RECYCLE = RANDOM;
-		currentIndex = new Random().nextInt(music.size());
-		changeMusic(currentIndex);
+		currentIndex = new Random().nextInt(musics.size());
+		playMusic(currentIndex);
 	}
 
 	public void pause() {
@@ -122,8 +122,28 @@ public class PlayBackService extends Service {
 		mediaPlayer.start();
 	}
 
-	public List<File> music() {
-		return PlayBackService.music;
+	public List<String> music() {
+		return this.musics;
+	}
+
+	// 通过安卓系统的MediaStore获取音乐文件
+	public List<String> contentResolver() {
+		ArrayList<String> list = new ArrayList<>();
+		ContentResolver contentResolver = this.getContentResolver();
+		Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+		Cursor cursor = contentResolver.query(uri, new String[] { "_data", }, null, null, null);
+		while (cursor.moveToNext()) {
+			list.add(cursor.getString(0));
+		}
+		cursor.close();
+		return list;
+	}
+
+	// 调用自己的api获得所有音乐文件的路径
+	@SuppressWarnings("unused")
+	private List<File> findMusic() {
+		File derictory = Environment.getExternalStorageDirectory();
+		return new FindFileBySuffix().getFile(derictory, new String[] { "mp3" });
 	}
 
 }
