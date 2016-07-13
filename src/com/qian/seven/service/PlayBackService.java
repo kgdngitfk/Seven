@@ -18,6 +18,7 @@ import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.provider.MediaStore;
+import android.util.Log;
 
 public class PlayBackService extends Service {
 	private MediaPlayer mediaPlayer = new MediaPlayer();
@@ -28,6 +29,13 @@ public class PlayBackService extends Service {
 	private static final int SINGLE_RECYCLE = 3;
 	private static int CURRENT_RECYCLE = LIST_RECYCLE;
 	private List<String> musics = new ArrayList<>();
+
+	@Override
+	public void onCreate() {
+		// TODO Auto-generated method stub
+		super.onCreate();
+		Log.i("seven", "serviceOnCreate");
+	}
 
 	public class LocalBinder extends Binder {
 		public PlayBackService getService() {

@@ -52,10 +52,14 @@ public class PlayActivity extends Activity implements OnClickListener {
 		String string = getIntent().getStringExtra("songName");
 		songName.setText(string);
 
-		Intent service = new Intent(this, PlayBackService.class);
-		//bindService(service, conn, Context.BIND_AUTO_CREATE);
+		bindService();
+	}
+
+	private void bindService() {
+		Intent service = new Intent(this,PlayBackService.class);
+		bindService(service, conn, Context.BIND_AUTO_CREATE);
 		int intExtra = getIntent().getIntExtra("index", 0);
-		//playService.playMusic(intExtra);
+		playService.playMusic(intExtra);
 	}
 
 	private void initButtons() {

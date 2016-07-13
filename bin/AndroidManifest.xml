@@ -24,8 +24,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.qian.seven.ui.PlayActivity" android:launchMode="singleInstance"></activity>
-       <service android:name="com.qian.seven.service.PlayBackService"></service>
+        <activity
+            android:name="com.qian.seven.ui.PlayActivity"
+            android:launchMode="singleInstance" >
+        </activity>
+
+        <service android:name="com.qian.seven.service.PlayBackService" >
+            <intent-filter>
+                <action android:name="musicservice" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
