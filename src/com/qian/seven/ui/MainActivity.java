@@ -3,10 +3,6 @@ package com.qian.seven.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.qian.seven.R;
-import com.qian.seven.service.PlayBackService;
-import com.qian.seven.service.PlayBackService.LocalBinder;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -24,6 +20,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.qian.seven.R;
+import com.qian.seven.service.PlayBackService;
+import com.qian.seven.service.PlayBackService.LocalBinder;
 
 public class MainActivity extends Activity {
 	private ListView listView;
@@ -64,9 +64,9 @@ public class MainActivity extends Activity {
 		while (cursor.moveToNext()) {
 			fileName.add(cursor.getString(0));
 		}
+		cursor.close();
 		if (fileName.isEmpty())
 			fileName.add("先去下载一些歌曲吧");
-		cursor.close();
 		ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
 				android.R.layout.simple_list_item_1, android.R.id.text1,
 				fileName);
@@ -78,12 +78,11 @@ public class MainActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				//MainActivity.this.play(position);
+				MainActivity.this.play(position);
 				playService.playMusic(position);
 			}
 		});
 	}
-
 	/**
 	 * start the play activity
 	 */

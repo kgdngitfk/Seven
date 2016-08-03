@@ -52,7 +52,7 @@ public class PlayActivity extends Activity implements OnClickListener {
 		String string = getIntent().getStringExtra("songName");
 		songName.setText(string);
 
-		bindService();
+		//bindService();
 	}
 
 	private void bindService() {
