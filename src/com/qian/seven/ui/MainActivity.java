@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.qian.seven.R;
+import com.qian.seven.service.MusicManager;
 import com.qian.seven.service.PlayBackService;
 import com.qian.seven.service.PlayBackService.LocalBinder;
 
@@ -46,6 +47,9 @@ public class MainActivity extends Activity {
 			// TODO Auto-generated method stub
 			lbinder = (LocalBinder) service;
 			playService = lbinder.getService();
+			MusicManager single = MusicManager.getSingle();
+			single.setmBinder(lbinder);
+			single.setPbService(playService);
 			Log.i("seven", "bind service");
 
 		}
@@ -79,7 +83,7 @@ public class MainActivity extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				MainActivity.this.play(position);
-				playService.playMusic(position);
+				//playService.playMusic(position);
 			}
 		});
 	}
@@ -91,6 +95,8 @@ public class MainActivity extends Activity {
 		intent.putExtra("index", position);
 		intent.putExtra("songName", fileName.get(position));
 		startActivity(intent);
+		Log.i("seven", "click play");
+		Log.i("seven", Thread.currentThread().getName());
 	}
 
 }

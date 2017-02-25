@@ -29,12 +29,11 @@ public class PlayBackService extends Service {
 	private static final int SINGLE_RECYCLE = 3;
 	private static int CURRENT_RECYCLE = LIST_RECYCLE;
 	private List<String> musics = new ArrayList<>();
-
 	@Override
 	public void onCreate() {
 		// TODO Auto-generated method stub
 		super.onCreate();
-		Log.i("seven", "serviceOnCreate");
+		Log.i("seven", "serviceOnCreate"+this);
 	}
 
 	public class LocalBinder extends Binder {
@@ -48,7 +47,7 @@ public class PlayBackService extends Service {
 	public IBinder onBind(Intent intent) {
 		// init resouce and set listener;
 		musics = this.contentResolver();
-		this.playMusic(intent.getIntExtra("index", 0));
+		//this.playMusic(intent.getIntExtra("index", 0));
 		mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
 			@Override
@@ -82,6 +81,7 @@ public class PlayBackService extends Service {
 	}
 
 	public void playMusic(int position) {
+		Log.i("seven", Thread.currentThread().getName());
 		currentIndex = position;
 		if (mediaPlayer.isPlaying())
 			mediaPlayer.reset();

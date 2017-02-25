@@ -1,6 +1,7 @@
 package com.qian.seven.ui;
 
 import com.qian.seven.R;
+import com.qian.seven.service.MusicManager;
 import com.qian.seven.service.PlayBackService;
 import com.qian.seven.service.PlayBackService.LocalBinder;
 
@@ -20,29 +21,8 @@ import android.widget.TextView;
 public class PlayActivity extends Activity implements OnClickListener {
 	private Button buttons[] = new Button[5];
 	private TextView songName;
-	private LocalBinder lbinder;
-	private PlayBackService playService;
-	private ServiceConnection conn = new ServiceConnection() {
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			// TODO Auto-generated method stub
-			lbinder = null;
-			conn = null;
-			Log.i("seven", "unbind service");
-
-		}
-
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			// TODO Auto-generated method stub
-			lbinder = (LocalBinder) service;
-			playService = lbinder.getService();
-			Log.i("seven", "bind service");
-
-		}
-	};
-
+	private PlayBackService playBackService;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -51,16 +31,12 @@ public class PlayActivity extends Activity implements OnClickListener {
 		songName = (TextView) findViewById(R.id.songName);
 		String string = getIntent().getStringExtra("songName");
 		songName.setText(string);
-
-		//bindService();
+		Log.i("seven", Thread.currentThread().getName());
+		//被intent激活的activity只能通过静态方法拿到绑定生成的Service
+		playBackService = MusicManager.getSingle().getPbService();
+		playBackService.playMusic(getIntent().getIntExtra("index", 0));
 	}
 
-	private void bindService() {
-		Intent service = new Intent(this,PlayBackService.class);
-		bindService(service, conn, Context.BIND_AUTO_CREATE);
-		int intExtra = getIntent().getIntExtra("index", 0);
-		playService.playMusic(intExtra);
-	}
 
 	private void initButtons() {
 		buttons[0] = (Button) findViewById(R.id.random);
@@ -78,27 +54,27 @@ public class PlayActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.stop: {
-			playService.pause();
+			playBackService.pause();
 			v.setClickable(false);
 			buttons[4].setClickable(true);
 			break;
 		}
 		case R.id.resume: {
-			playService.resume();
+			playBackService.resume();
 			v.setClickable(false);
 			buttons[3].setClickable(true);
 			break;
 		}
 		case R.id.next: {
-			playService.next();
+			playBackService.next();
 			break;
 		}
 		case R.id.previous: {
-			playService.previous();
+			playBackService.previous();
 			break;
 		}
 		case R.id.random: {
-			playService.randomPlay();
+			playBackService.randomPlay();
 			break;
 		}
 		}
