@@ -48,6 +48,7 @@ public class PlayBackService extends Service {
 		// init resouce and set listener;
 		musics = this.contentResolver();
 		//this.playMusic(intent.getIntExtra("index", 0));
+		//播放完成时会蹦掉
 		mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
 			@Override
